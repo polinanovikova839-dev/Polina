@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Polina">
+  <meta name="theme-color" content="#FF6B6B">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <title>Polina</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: #f5f5f5;
+      overflow: hidden;
+    }
+
+    .app {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 360px;
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      min-height: 240px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .card:active { transform: scale(0.98); }
+
+    .card-text {
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin-top: 1.5rem;
+    }
+
+    .nav button {
+      background: white;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.1s;
+    }
+
+    .nav button:active { transform: scale(0.92); }
+
+    .dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #ccc;
+      transition: all 0.25s ease;
+    }
+
+    .dot.active {
+      width: 20px;
+      border-radius: 3px;
+    }
+
+    .progress {
+      font-size: 12px;
+      color: #999;
+      text-align: center;
+      margin-top: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+
+    .hint {
+      font-size: 11px;
+      color: #bbb;
+      margin-top: 0.5rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div id="card" class="card" onclick="next()"></div>
+
+  <div class="nav">
+    <button onclick="prev()" aria-label="Previous">←</button>
+    <div class="dots" id="dots"></div>
+    <button onclick="next()" aria-label="Next">→</button>
+  </div>
+
+  <div class="progress" id="progress"></div>
+  <div class="hint">tap card or swipe to continue</div>
+</div>
+
+<script>
+const cards = [
+  {
+    bg: "#FF6B6B",
+    color: "#fff",
+    text: "I'm a communications and operations specialist with 15 years of experience."
+  },
+  {
+    bg: "#FF8E53",
+    color: "#fff",
+    text: "My superpower is problem solving — I come into a situation where something isn't working, audit the root cause, and build processes that deliver measurable results."
+  },
+  {
+    bg: "#FFCC00",
+    color: "#1a1a1a",
+    text: "At Hearst, Hubert Burda Media and InMyRoom the websites weren't growing — I restructured the editorial workflow and achieved 30–35% traffic growth year on year."
+  },
+  {
+    bg: "#4CD964",
+    color: "#fff",
+    text: "At Merck employees weren't opening emails — I put up posters with QR codes and got 10,000 townhall views."
+  },
+  {
+    bg: "#5AC8FA",
+    color: "#fff",
+    text: "At Habyt residents were leaving negative reviews — I fixed the communication and operations and reduced negative feedback by 20%."
+  },
+  {
+    bg: "#007AFF",
+    color: "#fff",
+    text: "What gives me energy is working with real people and seeing results I can actually measure."
+  },
+  {
+    bg: "#5856D6",
+    color: "#fff",
+    text: "That's why Kyriba interests me — because the impact is measurable and the problems are real."
+  }
+];
+
+let current = 0;
+
+function render() {
+  const c = cards[current];
+  const card = document.getElementById('card');
+  card.style.background = c.bg;
+  card.style.color = c.color;
+  card.innerHTML = `<div class="card-text">${c.text}</div>`;
+
+  const dots = document.getElementById('dots');
+  dots.innerHTML = cards.map((_, i) =>
+    `<div class="dot ${i === current ? 'active' : ''}" style="${i === current ? 'background:' + cards[i].bg : ''}"></div>`
+  ).join('');
+
+  document.getElementById('progress').textContent = `${current + 1} / ${cards.length}`;
+}
+
+function next() {
+  current = (current + 1) % cards.length;
+  render();
+}
+
+function prev() {
+  current = (current - 1 + cards.length) % cards.length;
+  render();
+}
+
+let startX = 0, startY = 0;
+
+document.addEventListener('touchstart', e => {
+  startX = e.touches[0].clientX;
+  startY = e.touches[0].clientY;
+});
+
+document.addEventListener('touchend', e => {
+  const dx = startX - e.changedTouches[0].clientX;
+  const dy = Math.abs(startY - e.changedTouches[0].clientY);
+  if (Math.abs(dx) > 40 && dy < 60) {
+    dx > 0 ? next() : prev();
+  }
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') next();
+  if (e.key === 'ArrowLeft') prev();
+});
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+}
+
+render();
+</script>
+</body>
+</html>
