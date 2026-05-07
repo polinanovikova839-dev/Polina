@@ -8,86 +8,214 @@
   <meta name="apple-mobile-web-app-title" content="Polina">
   <meta name="theme-color" content="#111111">
   <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <title>Polina</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; width: 100%; overflow: hidden; background: #111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
 
+    html, body {
+      height: 100%; width: 100%;
+      background: #111;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      color: white;
+    }
+
+    /* ===== PORTRAIT ===== */
     .feed {
-      height: 100vh; width: 100%;
-      overflow-y: scroll;
-      scroll-snap-type: y mandatory;
+      padding: 1rem 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      overflow-y: auto;
+      height: 100vh;
       -webkit-overflow-scrolling: touch;
     }
-    .feed::-webkit-scrollbar { display: none; }
 
-    .block {
-      height: 100vh; width: 100%;
-      scroll-snap-align: start;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 1.2rem; position: relative;
-    }
+    .block { width: 100%; }
 
-    .block-label {
-      font-size: 10px; font-weight: 700;
-      letter-spacing: 0.14em; text-transform: uppercase;
-      color: rgba(255,255,255,0.4);
-      margin-bottom: 0.6rem; text-align: center;
-    }
-
-    .carousel { width: 100%; max-width: 380px; overflow: hidden; }
+    .carousel { width: 100%; overflow: hidden; border-radius: 20px; }
 
     .carousel-track {
       display: flex;
-      transition: transform 0.3s ease;
+      transition: transform 0.28s ease;
       will-change: transform;
     }
 
     .card {
-      min-width: 100%; border-radius: 22px;
-      padding: 2rem 1.75rem;
-      min-height: 200px; max-height: 55vh;
-      display: flex; flex-direction: column;
-      justify-content: center; align-items: center;
-      text-align: center; overflow-y: auto;
+      min-width: 100%;
+      border-radius: 20px;
+      padding: 1.5rem 1.5rem;
+      min-height: 140px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
     }
 
-    .card-text { font-size: 18px; font-weight: 700; line-height: 1.5; }
-    .card-text.heading { font-size: 21px; letter-spacing: 0.02em; }
-
-    .dots { display: flex; gap: 5px; justify-content: center; margin-top: 0.75rem; flex-wrap: wrap; }
-    .dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: all 0.25s; flex-shrink: 0; }
-    .dot.active { width: 16px; border-radius: 3px; background: white; }
-
-    .nav { display: flex; justify-content: center; align-items: center; gap: 14px; margin-top: 0.75rem; }
-    .nav button {
-      background: rgba(255,255,255,0.1); border: none; border-radius: 50%;
-      width: 40px; height: 40px; font-size: 17px; color: white;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-    }
-    .nav button:active { background: rgba(255,255,255,0.25); }
-
-    .progress { font-size: 10px; color: rgba(255,255,255,0.3); text-align: center; margin-top: 0.3rem; }
-
-    .scroll-hint {
-      position: absolute; bottom: 1rem;
-      font-size: 10px; color: rgba(255,255,255,0.2);
-      letter-spacing: 0.08em; text-transform: uppercase;
+    .card-text {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.5;
     }
 
+    .card-text.heading {
+      font-size: 18px;
+      letter-spacing: 0.02em;
+    }
+
+    .bottom-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 0.5rem;
+    }
+
+    .nav-btn {
+      background: rgba(255,255,255,0.1);
+      border: none; border-radius: 50%;
+      width: 34px; height: 34px;
+      font-size: 15px; color: white;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .nav-btn:active { background: rgba(255,255,255,0.3); }
+
+    .dots {
+      display: flex; gap: 4px; align-items: center; flex-wrap: wrap; justify-content: center;
+    }
+    .dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      transition: all 0.22s; flex-shrink: 0;
+    }
+    .dot.active { width: 14px; border-radius: 3px; background: white; }
+
+    .progress {
+      font-size: 10px; color: rgba(255,255,255,0.3);
+      flex-shrink: 0;
+    }
+
+    /* ===== LANDSCAPE ===== */
     @media (orientation: landscape) {
-      .card { min-height: 35vh; max-height: 65vh; padding: 1rem 2rem; }
-      .card-text { font-size: 15px; }
-      .card-text.heading { font-size: 17px; }
-      .block { padding: 0.6rem; }
-      .block-label { margin-bottom: 0.3rem; }
+      body { overflow: hidden; }
+
+      .feed {
+        display: none !important;
+      }
+
+      .landscape-view {
+        display: flex !important;
+        height: 100vh; width: 100%;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem;
+      }
+
+      .ls-carousel { width: 100%; height: 100%; overflow: hidden; }
+
+      .ls-track {
+        display: flex;
+        height: 100%;
+        transition: transform 0.28s ease;
+        will-change: transform;
+      }
+
+      .ls-card {
+        min-width: 100%; height: 100%;
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 1.5rem 3rem;
+        position: relative;
+      }
+
+      .ls-card-text {
+        font-size: 22px;
+        font-weight: 700;
+        line-height: 1.5;
+      }
+
+      .ls-card-text.heading { font-size: 26px; letter-spacing: 0.02em; }
+
+      .ls-nav {
+        position: absolute;
+        bottom: 1rem;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .ls-nav .nav-btn {
+        width: 38px; height: 38px; font-size: 16px;
+      }
+
+      .ls-progress {
+        font-size: 11px;
+        color: rgba(255,255,255,0.5);
+      }
+
+      .ls-dots {
+        display: flex; gap: 5px; align-items: center;
+      }
+
+      .ls-dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: rgba(255,255,255,0.3);
+        transition: all 0.22s;
+      }
+      .ls-dot.active { width: 18px; border-radius: 3px; background: white; }
+
+      /* topic selector */
+      .ls-topics {
+        position: absolute;
+        top: 0.6rem;
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .ls-topic-btn {
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        background: rgba(255,255,255,0.1);
+        border: none;
+        border-radius: 20px;
+        padding: 4px 10px;
+        color: rgba(255,255,255,0.5);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .ls-topic-btn.active {
+        background: rgba(255,255,255,0.25);
+        color: white;
+      }
     }
+
+    .landscape-view { display: none; }
   </style>
 </head>
 <body>
+
+<!-- PORTRAIT FEED -->
 <div class="feed" id="feed"></div>
+
+<!-- LANDSCAPE VIEW -->
+<div class="landscape-view" id="landscape-view">
+  <div class="ls-topics" id="ls-topics"></div>
+  <div class="ls-carousel">
+    <div class="ls-track" id="ls-track"></div>
+  </div>
+</div>
+
 <script>
 const data = [
   {
@@ -156,83 +284,161 @@ const data = [
   }
 ];
 
-const state = data.map(() => 0);
+const pState = data.map(() => 0); // portrait state per block
+let lsBlock = 0; // landscape active block
+let lsCard = 0;  // landscape active card
 
-function buildFeed() {
+// ===== BUILD PORTRAIT =====
+function buildPortrait() {
   const feed = document.getElementById('feed');
   data.forEach((block, bi) => {
     const blockEl = document.createElement('div');
     blockEl.className = 'block';
     blockEl.id = `block-${bi}`;
 
-    blockEl.innerHTML = `
-      <div class="block-label">${block.label}</div>
-      <div class="carousel">
-        <div class="carousel-track" id="track-${bi}">
-          ${block.cards.map(c => `
-            <div class="card" style="background:${c.bg};color:${c.color}">
-              <div class="card-text${c.heading ? ' heading' : ''}">${c.text}</div>
-            </div>`).join('')}
-        </div>
-      </div>
-      <div class="dots" id="dots-${bi}"></div>
-      <div class="nav">
-        <button onclick="slide(${bi},-1)">←</button>
-        <button onclick="slide(${bi},1)">→</button>
-      </div>
-      <div class="progress" id="progress-${bi}"></div>
-      <div class="scroll-hint">${bi < data.length - 1 ? '↓ next topic' : '↑ start over'}</div>
+    const carousel = document.createElement('div');
+    carousel.className = 'carousel';
+
+    const track = document.createElement('div');
+    track.className = 'carousel-track';
+    track.id = `track-${bi}`;
+
+    block.cards.forEach(c => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.style.background = c.bg;
+      card.style.color = c.color;
+      card.innerHTML = `<div class="card-text${c.heading ? ' heading' : ''}">${c.text}</div>`;
+      track.appendChild(card);
+    });
+
+    carousel.appendChild(track);
+
+    const bottomRow = document.createElement('div');
+    bottomRow.className = 'bottom-row';
+    bottomRow.innerHTML = `
+      <button class="nav-btn" onclick="pSlide(${bi},-1)">←</button>
+      <div class="dots" id="pdots-${bi}"></div>
+      <span class="progress" id="pprog-${bi}"></span>
+      <button class="nav-btn" onclick="pSlide(${bi},1)">→</button>
     `;
 
+    blockEl.appendChild(carousel);
+    blockEl.appendChild(bottomRow);
     feed.appendChild(blockEl);
-    updateDots(bi);
+    pUpdateDots(bi);
   });
 }
 
-function slide(bi, dir) {
-  state[bi] = (state[bi] + dir + data[bi].cards.length) % data[bi].cards.length;
-  updateCarousel(bi);
+function pSlide(bi, dir) {
+  pState[bi] = (pState[bi] + dir + data[bi].cards.length) % data[bi].cards.length;
+  document.getElementById(`track-${bi}`).style.transform = `translateX(-${pState[bi] * 100}%)`;
+  pUpdateDots(bi);
 }
 
-function updateCarousel(bi) {
-  document.getElementById(`track-${bi}`).style.transform = `translateX(-${state[bi] * 100}%)`;
-  updateDots(bi);
+function pUpdateDots(bi) {
+  document.getElementById(`pdots-${bi}`).innerHTML = data[bi].cards.map((_, i) =>
+    `<div class="dot ${i === pState[bi] ? 'active' : ''}"></div>`).join('');
+  document.getElementById(`pprog-${bi}`).textContent = `${pState[bi] + 1}/${data[bi].cards.length}`;
 }
 
-function updateDots(bi) {
-  document.getElementById(`dots-${bi}`).innerHTML = data[bi].cards.map((_, i) =>
-    `<div class="dot ${i === state[bi] ? 'active' : ''}"></div>`
+// ===== BUILD LANDSCAPE =====
+function buildLandscape() {
+  const topics = document.getElementById('ls-topics');
+  topics.innerHTML = data.map((b, bi) =>
+    `<button class="ls-topic-btn ${bi === 0 ? 'active' : ''}" onclick="lsGoBlock(${bi})">${b.label}</button>`
   ).join('');
-  document.getElementById(`progress-${bi}`).textContent = `${state[bi] + 1} / ${data[bi].cards.length}`;
+
+  renderLsCards();
 }
 
-let tx = 0, ty = 0, activeBlock = null;
+function renderLsCards() {
+  const track = document.getElementById('ls-track');
+  const block = data[lsBlock];
+  track.innerHTML = block.cards.map(c =>
+    `<div class="ls-card" style="background:${c.bg};color:${c.color}">
+      <div class="ls-card-text${c.heading ? ' heading' : ''}">${c.text}</div>
+      <div class="ls-nav">
+        <button class="nav-btn" onclick="lsSlide(-1)">←</button>
+        <div class="ls-dots" id="ls-dots"></div>
+        <span class="ls-progress" id="ls-prog"></span>
+        <button class="nav-btn" onclick="lsSlide(1)">→</button>
+      </div>
+    </div>`
+  ).join('');
+  lsUpdateDots();
+  lsGo();
+}
 
+function lsGo() {
+  document.getElementById('ls-track').style.transform = `translateX(-${lsCard * 100}%)`;
+  lsUpdateDots();
+}
+
+function lsSlide(dir) {
+  lsCard = (lsCard + dir + data[lsBlock].cards.length) % data[lsBlock].cards.length;
+  lsGo();
+}
+
+function lsGoBlock(bi) {
+  lsBlock = bi; lsCard = 0;
+  document.querySelectorAll('.ls-topic-btn').forEach((b, i) => b.classList.toggle('active', i === bi));
+  renderLsCards();
+}
+
+function lsUpdateDots() {
+  const dots = document.getElementById('ls-dots');
+  const prog = document.getElementById('ls-prog');
+  if (!dots || !prog) return;
+  dots.innerHTML = data[lsBlock].cards.map((_, i) =>
+    `<div class="ls-dot ${i === lsCard ? 'active' : ''}"></div>`).join('');
+  prog.textContent = `${lsCard + 1}/${data[lsBlock].cards.length}`;
+}
+
+// ===== TOUCH SWIPE PORTRAIT =====
+let tx = 0, ty = 0, activeBlock = null;
 document.addEventListener('touchstart', e => {
-  tx = e.touches[0].clientX;
-  ty = e.touches[0].clientY;
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
   let el = e.target;
   while (el && !el.classList.contains('block')) el = el.parentElement;
   activeBlock = el ? parseInt(el.id.split('-')[1]) : null;
 }, { passive: true });
 
 document.addEventListener('touchend', e => {
+  if (window.innerWidth > window.innerHeight) return; // landscape handled separately
   if (activeBlock === null) return;
   const dx = tx - e.changedTouches[0].clientX;
   const dy = Math.abs(ty - e.changedTouches[0].clientY);
-  if (Math.abs(dx) > 40 && dy < 80) dx > 0 ? slide(activeBlock, 1) : slide(activeBlock, -1);
+  if (Math.abs(dx) > 40 && dy < 80) dx > 0 ? pSlide(activeBlock, 1) : pSlide(activeBlock, -1);
 });
 
+// ===== TOUCH SWIPE LANDSCAPE =====
+let lsTx = 0;
+document.addEventListener('touchstart', e => { lsTx = e.touches[0].clientX; }, { passive: true });
+document.addEventListener('touchend', e => {
+  if (window.innerWidth <= window.innerHeight) return;
+  const dx = lsTx - e.changedTouches[0].clientX;
+  if (Math.abs(dx) > 40) dx > 0 ? lsSlide(1) : lsSlide(-1);
+});
+
+// ===== KEYBOARD =====
 document.addEventListener('keydown', e => {
-  const feed = document.getElementById('feed');
-  const bi = Math.round(feed.scrollTop / window.innerHeight);
-  if (e.key === 'ArrowRight') slide(bi, 1);
-  if (e.key === 'ArrowLeft') slide(bi, -1);
+  if (window.innerWidth > window.innerHeight) {
+    if (e.key === 'ArrowRight') lsSlide(1);
+    if (e.key === 'ArrowLeft') lsSlide(-1);
+  } else {
+    const feed = document.getElementById('feed');
+    const bi = Math.round(feed.scrollTop / (feed.scrollHeight / data.length));
+    if (e.key === 'ArrowRight') pSlide(bi, 1);
+    if (e.key === 'ArrowLeft') pSlide(bi, -1);
+  }
 });
 
+// ===== INIT =====
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
 
-buildFeed();
+buildPortrait();
+buildLandscape();
 </script>
 </body>
 </html>
