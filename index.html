@@ -6,234 +6,233 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Polina">
-  <meta name="theme-color" content="#FF6B6B">
+  <meta name="theme-color" content="#111111">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <title>Polina</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      height: 100%;
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      background: #1a1a1a;
-      overflow: hidden;
+    html, body { height: 100%; width: 100%; overflow: hidden; background: #111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+
+    .feed {
+      height: 100vh; width: 100%;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      -webkit-overflow-scrolling: touch;
     }
-    .app {
-      height: 100vh;
+    .feed::-webkit-scrollbar { display: none; }
+
+    .block {
+      height: 100vh; width: 100%;
+      scroll-snap-align: start;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 1.2rem; position: relative;
+    }
+
+    .block-label {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 0.6rem; text-align: center;
+    }
+
+    .carousel { width: 100%; max-width: 380px; overflow: hidden; }
+
+    .carousel-track {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 1.2rem;
-      gap: 0;
+      transition: transform 0.3s ease;
+      will-change: transform;
     }
-    .section-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.5);
-      margin-bottom: 0.6rem;
-      text-align: center;
-      min-height: 16px;
-    }
+
     .card {
-      width: 100%;
-      max-width: 360px;
-      border-radius: 24px;
+      min-width: 100%; border-radius: 22px;
       padding: 2rem 1.75rem;
-      min-height: 200px;
-      max-height: 60vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      cursor: pointer;
-      transition: transform 0.12s ease;
-      user-select: none;
-      -webkit-user-select: none;
-      overflow-y: auto;
+      min-height: 200px; max-height: 55vh;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      text-align: center; overflow-y: auto;
     }
-    .card:active { transform: scale(0.97); }
-    .card-text {
-      font-size: 18px;
-      font-weight: 700;
-      line-height: 1.5;
-    }
-    .card-text.heading {
-      font-size: 22px;
-      letter-spacing: 0.02em;
-    }
-    .nav {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 14px;
-      margin-top: 1rem;
-    }
+
+    .card-text { font-size: 18px; font-weight: 700; line-height: 1.5; }
+    .card-text.heading { font-size: 21px; letter-spacing: 0.02em; }
+
+    .dots { display: flex; gap: 5px; justify-content: center; margin-top: 0.75rem; flex-wrap: wrap; }
+    .dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: all 0.25s; flex-shrink: 0; }
+    .dot.active { width: 16px; border-radius: 3px; background: white; }
+
+    .nav { display: flex; justify-content: center; align-items: center; gap: 14px; margin-top: 0.75rem; }
     .nav button {
-      background: rgba(255,255,255,0.12);
-      border: none;
-      border-radius: 50%;
-      width: 42px;
-      height: 42px;
-      font-size: 18px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      transition: background 0.15s;
+      background: rgba(255,255,255,0.1); border: none; border-radius: 50%;
+      width: 40px; height: 40px; font-size: 17px; color: white;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
     }
     .nav button:active { background: rgba(255,255,255,0.25); }
-    .dots {
-      display: flex;
-      gap: 5px;
-      align-items: center;
-      flex-wrap: wrap;
-      justify-content: center;
-      max-width: 200px;
+
+    .progress { font-size: 10px; color: rgba(255,255,255,0.3); text-align: center; margin-top: 0.3rem; }
+
+    .scroll-hint {
+      position: absolute; bottom: 1rem;
+      font-size: 10px; color: rgba(255,255,255,0.2);
+      letter-spacing: 0.08em; text-transform: uppercase;
     }
-    .dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.25);
-      transition: all 0.25s ease;
-      flex-shrink: 0;
-    }
-    .dot.active {
-      width: 16px;
-      border-radius: 3px;
-      background: white;
-    }
-    .progress {
-      font-size: 11px;
-      color: rgba(255,255,255,0.4);
-      text-align: center;
-      margin-top: 0.5rem;
-      letter-spacing: 0.05em;
-    }
-    .hint {
-      font-size: 10px;
-      color: rgba(255,255,255,0.2);
-      margin-top: 0.3rem;
+
+    @media (orientation: landscape) {
+      .card { min-height: 35vh; max-height: 65vh; padding: 1rem 2rem; }
+      .card-text { font-size: 15px; }
+      .card-text.heading { font-size: 17px; }
+      .block { padding: 0.6rem; }
+      .block-label { margin-bottom: 0.3rem; }
     }
   </style>
 </head>
 <body>
-<div class="app">
-  <div class="section-label" id="section-label"></div>
-  <div id="card" class="card" onclick="next()"></div>
-  <div class="nav">
-    <button onclick="prev()" aria-label="Previous">←</button>
-    <div class="dots" id="dots"></div>
-    <button onclick="next()" aria-label="Next">→</button>
-  </div>
-  <div class="progress" id="progress"></div>
-  <div class="hint">tap or swipe</div>
-</div>
-
+<div class="feed" id="feed"></div>
 <script>
-const sections = {
-  A: "Tell Me About Yourself",
-  B: "Tell Me About Your Experience",
-  C: "Strengths & Results",
-  D: "What Excites You About This Role",
-  E: "Why Kyriba"
-};
-
-const cards = [
-  // A
-  { section: "A", bg: "#FF6B6B", color: "#fff", heading: true, text: "TELL ME ABOUT YOURSELF" },
-  { section: "A", bg: "#FF6B6B", color: "#fff", text: "I'm a communications and operations specialist with 15 years of experience." },
-  { section: "A", bg: "#FF8E53", color: "#fff", text: "My superpower is problem solving — I come into a situation where something isn't working, audit the root cause, and build processes that deliver measurable results." },
-  { section: "A", bg: "#FFCC00", color: "#1a1a1a", text: "At Hearst, Hubert Burda Media and InMyRoom the websites weren't growing — I restructured the editorial workflow and achieved 30–35% traffic growth year on year." },
-  { section: "A", bg: "#4CD964", color: "#fff", text: "At Merck employees weren't opening emails — I put up posters with QR codes and got 10,000 townhall views." },
-  { section: "A", bg: "#5AC8FA", color: "#fff", text: "At Habyt residents were leaving negative reviews — I fixed the communication and operations and reduced negative feedback by 20%." },
-  { section: "A", bg: "#007AFF", color: "#fff", text: "What gives me energy is working with real people and seeing results I can actually measure." },
-  { section: "A", bg: "#5856D6", color: "#fff", text: "That's why this role interests me — because the impact is measurable and the problems are real." },
-
-  // B
-  { section: "B", bg: "#FF2D55", color: "#fff", heading: true, text: "TELL ME ABOUT YOUR EXPERIENCE" },
-  { section: "B", bg: "#FF2D55", color: "#fff", text: "My career has three chapters. The first — editorial. I grew from cultural journalist to Editor-in-Chief at Hearst and Hubert Burda Media." },
-  { section: "B", bg: "#FF6B6B", color: "#fff", text: "I grew digital audiences from zero to 3.5 million readers at ELLE Girl and 6 million at InMyRoom — by restructuring content workflows, building editorial teams of up to 15 people, establishing publishing rhythms, and scaling output without losing quality." },
-  { section: "B", bg: "#FF8E53", color: "#fff", text: "Hundreds of brand partnerships — and end-to-end stakeholder communication across editorial, commercial, creative, and agency teams." },
-  { section: "B", bg: "#FFCC00", color: "#1a1a1a", text: "The second chapter — communications. At Merck KGaA I owned internal communications for 65,000 employees. I learned how organisations work from the inside and how to make messages actually land." },
-  { section: "B", bg: "#4CD964", color: "#fff", text: "The third chapter — operations. At Habyt I managed 500+ residential units across Germany. Daily escalations, vendor coordination, SOP development. Good communication is also an operational tool." },
-  { section: "B", bg: "#5AC8FA", color: "#fff", text: "And looking back — it's always been the same story: I find what isn't working, I build a process to fix it, and I measure the result." },
-  { section: "B", bg: "#007AFF", color: "#fff", text: "Along the way I developed the skills Kyriba needs most — executive thought leadership, LinkedIn content strategy, B2B storytelling, and stakeholder governance across global teams." },
-
-  // C
-  { section: "C", bg: "#5856D6", color: "#fff", heading: true, text: "WHAT ARE YOUR STRENGTHS AND RESULTS?" },
-  { section: "C", bg: "#5856D6", color: "#fff", text: "My strongest skill is taking business objectives and solving them through communication — and delivering measurable results." },
-  { section: "C", bg: "#AF52DE", color: "#fff", text: "I see where communication breaks down and build the mechanics that make it work — directly tied to business goals." },
-  { section: "C", bg: "#FF2D55", color: "#fff", text: "At Merck the symptom was low townhall attendance. The root cause was that employees didn't see the email because they weren't at their desks." },
-  { section: "C", bg: "#FF6B6B", color: "#fff", text: "So I went where they were — the canteen — with posters and QR codes. The result was 10,000 views." },
-  { section: "C", bg: "#FF8E53", color: "#fff", text: "At Habyt the symptom was negative reviews. The root cause was a broken chain between the resident and the teams who could actually solve the problem." },
-  { section: "C", bg: "#FFCC00", color: "#1a1a1a", text: "I became the bridge that never broke — building operational processes that connected residents to solutions." },
-  { section: "C", bg: "#4CD964", color: "#fff", text: "As a result, response time dropped by 35% and negative feedback by 20%. Not bad for someone who just moved to Germany." },
-  { section: "C", bg: "#5AC8FA", color: "#fff", text: "I build the channel strategy and governance framework so the same problem doesn't come back." },
-
-  // D
-  { section: "D", bg: "#007AFF", color: "#fff", heading: true, text: "WHAT EXCITES YOU ABOUT THIS ROLE?" },
-  { section: "D", bg: "#007AFF", color: "#fff", text: "Right now I'm completing the McKinsey Forward Programme and looking for a senior role where communication has a direct business impact." },
-  { section: "D", bg: "#5856D6", color: "#fff", text: "I've spent 15 years building content systems, communications frameworks, and operational processes across very different industries." },
-  { section: "D", bg: "#AF52DE", color: "#fff", text: "What I'm most proud of is building community at B2B level — at creative agency Elbe am Rhein and among stakeholders of the European Olympic Academies across 30 countries." },
-  { section: "D", bg: "#FF2D55", color: "#fff", text: "At EOA I built a communications strategy around executive thought leadership that felt human, not corporate." },
-  { section: "D", bg: "#FF8E53", color: "#fff", text: "At PackPart I took the same approach into short executive thought leadership videos — and applied my hands-on skills in AI design and video editing." },
-  { section: "D", bg: "#FFCC00", color: "#1a1a1a", text: "I want to bring these skills to a company at Kyriba's level — and feed my passion for finance and grow in the world of financial instruments." },
-
-  // E
-  { section: "E", bg: "#4CD964", color: "#fff", heading: true, text: "WHY KYRIBA?" },
-  { section: "E", bg: "#4CD964", color: "#fff", text: "Three reasons. First — the audience. Financial Officers care about three things every single day: control, visibility, and risk." },
-  { section: "E", bg: "#5AC8FA", color: "#fff", text: "Not as abstract concepts — as real daily pressure. My job at Kyriba is to translate complex treasury solutions into content that speaks directly to that pressure." },
-  { section: "E", bg: "#007AFF", color: "#fff", text: "Second — the scale. 3,000 customers, 15 trillion dollars in payments, 30+ markets. Building a LinkedIn thought leadership programme at this scale is a different kind of problem than I've solved before. I want that challenge." },
-  { section: "E", bg: "#5856D6", color: "#fff", text: "Third — the mechanics. Kyriba connects, protects, forecasts and optimises. Every one of those four words is a story." },
-  { section: "E", bg: "#AF52DE", color: "#fff", text: "My job is to find the human version — the CFO who saved 8 hours a week, the treasury team that caught a fraud attempt at 2am, the company that survived a currency crisis because they had visibility." },
-  { section: "E", bg: "#FF2D55", color: "#fff", text: "Those stories exist. I want to find them and tell them." }
+const data = [
+  {
+    label: "Tell Me About Yourself",
+    cards: [
+      { bg: "#FF6B6B", color: "#fff", heading: true, text: "TELL ME ABOUT YOURSELF" },
+      { bg: "#FF6B6B", color: "#fff", text: "I'm a communications and operations specialist with 15 years of experience." },
+      { bg: "#FF8E53", color: "#fff", text: "My superpower is problem solving — I come into a situation where something isn't working, audit the root cause, and build processes that deliver measurable results." },
+      { bg: "#FFCC00", color: "#1a1a1a", text: "At Hearst, Hubert Burda Media and InMyRoom the websites weren't growing — I restructured the editorial workflow and achieved 30–35% traffic growth year on year." },
+      { bg: "#4CD964", color: "#fff", text: "At Merck employees weren't opening emails — I put up posters with QR codes and got 10,000 townhall views." },
+      { bg: "#5AC8FA", color: "#fff", text: "At Habyt residents were leaving negative reviews — I fixed the communication and operations and reduced negative feedback by 20%." },
+      { bg: "#007AFF", color: "#fff", text: "What gives me energy is working with real people and seeing results I can actually measure." },
+      { bg: "#5856D6", color: "#fff", text: "That's why this role interests me — because the impact is measurable and the problems are real." }
+    ]
+  },
+  {
+    label: "Tell Me About Your Experience",
+    cards: [
+      { bg: "#FF2D55", color: "#fff", heading: true, text: "TELL ME ABOUT YOUR EXPERIENCE" },
+      { bg: "#FF2D55", color: "#fff", text: "My career has three chapters. The first — editorial. I grew from cultural journalist to Editor-in-Chief at Hearst and Hubert Burda Media." },
+      { bg: "#FF6B6B", color: "#fff", text: "I grew digital audiences from zero to 3.5 million readers at ELLE Girl and 6 million at InMyRoom — by restructuring content workflows, building editorial teams of up to 15 people, and scaling output without losing quality." },
+      { bg: "#FF8E53", color: "#fff", text: "Hundreds of brand partnerships — and end-to-end stakeholder communication across editorial, commercial, creative, and agency teams." },
+      { bg: "#FFCC00", color: "#1a1a1a", text: "The second chapter — communications. At Merck KGaA I owned internal communications for 65,000 employees. I learned how to make messages actually land." },
+      { bg: "#4CD964", color: "#fff", text: "The third chapter — operations. At Habyt I managed 500+ residential units across Germany. Daily escalations, vendor coordination, SOP development." },
+      { bg: "#5AC8FA", color: "#fff", text: "And looking back — it's always been the same story: I find what isn't working, I build a process to fix it, and I measure the result." },
+      { bg: "#007AFF", color: "#fff", text: "Along the way I developed the skills Kyriba needs most — executive thought leadership, LinkedIn content strategy, B2B storytelling, and stakeholder governance across global teams." }
+    ]
+  },
+  {
+    label: "Strengths & Results",
+    cards: [
+      { bg: "#5856D6", color: "#fff", heading: true, text: "WHAT ARE YOUR STRENGTHS AND RESULTS?" },
+      { bg: "#5856D6", color: "#fff", text: "My strongest skill is taking business objectives and solving them through communication — and delivering measurable results." },
+      { bg: "#AF52DE", color: "#fff", text: "I see where communication breaks down and build the mechanics that make it work — directly tied to business goals." },
+      { bg: "#FF2D55", color: "#fff", text: "At Merck the symptom was low townhall attendance. The root cause was that employees didn't see the email because they weren't at their desks." },
+      { bg: "#FF6B6B", color: "#fff", text: "So I went where they were — the canteen — with posters and QR codes. The result was 10,000 views." },
+      { bg: "#FF8E53", color: "#fff", text: "At Habyt the symptom was negative reviews. The root cause was a broken chain between the resident and the teams who could actually solve the problem." },
+      { bg: "#FFCC00", color: "#1a1a1a", text: "I became the bridge that never broke — building operational processes that connected residents to solutions." },
+      { bg: "#4CD964", color: "#fff", text: "As a result, response time dropped by 35% and negative feedback by 20%. Not bad for someone who just moved to Germany." },
+      { bg: "#5AC8FA", color: "#fff", text: "I build the channel strategy and governance framework so the same problem doesn't come back." }
+    ]
+  },
+  {
+    label: "What Excites You About This Role",
+    cards: [
+      { bg: "#007AFF", color: "#fff", heading: true, text: "WHAT EXCITES YOU ABOUT THIS ROLE?" },
+      { bg: "#007AFF", color: "#fff", text: "Right now I'm completing the McKinsey Forward Programme and looking for a senior role where communication has a direct business impact." },
+      { bg: "#5856D6", color: "#fff", text: "I've spent 15 years building content systems, communications frameworks, and operational processes across very different industries." },
+      { bg: "#AF52DE", color: "#fff", text: "What I'm most proud of is building community at B2B level — at creative agency Elbe am Rhein and among stakeholders of the European Olympic Academies across 30 countries." },
+      { bg: "#FF2D55", color: "#fff", text: "At EOA I built a communications strategy around executive thought leadership that felt human, not corporate." },
+      { bg: "#FF8E53", color: "#fff", text: "At PackPart I took the same approach into short executive thought leadership videos — and applied my hands-on skills in AI design and video editing." },
+      { bg: "#FFCC00", color: "#1a1a1a", text: "I want to bring these skills to a company at Kyriba's level — and feed my passion for finance and grow in the world of financial instruments." }
+    ]
+  },
+  {
+    label: "Why Kyriba",
+    cards: [
+      { bg: "#4CD964", color: "#fff", heading: true, text: "WHY KYRIBA?" },
+      { bg: "#4CD964", color: "#fff", text: "Three reasons. First — the audience. Financial Officers care about three things every single day: control, visibility, and risk." },
+      { bg: "#5AC8FA", color: "#fff", text: "Not as abstract concepts — as real daily pressure. My job at Kyriba is to translate complex treasury solutions into content that speaks directly to that pressure." },
+      { bg: "#007AFF", color: "#fff", text: "Second — the scale. 3,000 customers, 15 trillion dollars in payments, 30+ markets. Building a LinkedIn thought leadership programme at this scale is a different kind of problem than I've solved before. I want that challenge." },
+      { bg: "#5856D6", color: "#fff", text: "Third — the mechanics. Kyriba connects, protects, forecasts and optimises. Every one of those four words is a story." },
+      { bg: "#AF52DE", color: "#fff", text: "My job is to find the human version — the CFO who saved 8 hours a week, the treasury team that caught a fraud attempt at 2am, the company that survived a currency crisis because they had visibility." },
+      { bg: "#FF2D55", color: "#fff", text: "Those stories exist. I want to find them and tell them." }
+    ]
+  }
 ];
 
-let current = 0;
+const state = data.map(() => 0);
 
-function render() {
-  const c = cards[current];
-  const card = document.getElementById('card');
-  card.style.background = c.bg;
-  card.style.color = c.color;
-  card.innerHTML = `<div class="card-text${c.heading ? ' heading' : ''}">${c.text}</div>`;
+function buildFeed() {
+  const feed = document.getElementById('feed');
+  data.forEach((block, bi) => {
+    const blockEl = document.createElement('div');
+    blockEl.className = 'block';
+    blockEl.id = `block-${bi}`;
 
-  document.getElementById('section-label').textContent = sections[c.section] || '';
+    blockEl.innerHTML = `
+      <div class="block-label">${block.label}</div>
+      <div class="carousel">
+        <div class="carousel-track" id="track-${bi}">
+          ${block.cards.map(c => `
+            <div class="card" style="background:${c.bg};color:${c.color}">
+              <div class="card-text${c.heading ? ' heading' : ''}">${c.text}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div class="dots" id="dots-${bi}"></div>
+      <div class="nav">
+        <button onclick="slide(${bi},-1)">←</button>
+        <button onclick="slide(${bi},1)">→</button>
+      </div>
+      <div class="progress" id="progress-${bi}"></div>
+      <div class="scroll-hint">${bi < data.length - 1 ? '↓ next topic' : '↑ start over'}</div>
+    `;
 
-  const dots = document.getElementById('dots');
-  dots.innerHTML = cards.map((_, i) =>
-    `<div class="dot ${i === current ? 'active' : ''}"></div>`
+    feed.appendChild(blockEl);
+    updateDots(bi);
+  });
+}
+
+function slide(bi, dir) {
+  state[bi] = (state[bi] + dir + data[bi].cards.length) % data[bi].cards.length;
+  updateCarousel(bi);
+}
+
+function updateCarousel(bi) {
+  document.getElementById(`track-${bi}`).style.transform = `translateX(-${state[bi] * 100}%)`;
+  updateDots(bi);
+}
+
+function updateDots(bi) {
+  document.getElementById(`dots-${bi}`).innerHTML = data[bi].cards.map((_, i) =>
+    `<div class="dot ${i === state[bi] ? 'active' : ''}"></div>`
   ).join('');
-
-  document.getElementById('progress').textContent = `${current + 1} / ${cards.length}`;
+  document.getElementById(`progress-${bi}`).textContent = `${state[bi] + 1} / ${data[bi].cards.length}`;
 }
 
-function next() { current = (current + 1) % cards.length; render(); }
-function prev() { current = (current - 1 + cards.length) % cards.length; render(); }
+let tx = 0, ty = 0, activeBlock = null;
 
-let startX = 0, startY = 0;
-document.addEventListener('touchstart', e => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; });
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX;
+  ty = e.touches[0].clientY;
+  let el = e.target;
+  while (el && !el.classList.contains('block')) el = el.parentElement;
+  activeBlock = el ? parseInt(el.id.split('-')[1]) : null;
+}, { passive: true });
+
 document.addEventListener('touchend', e => {
-  const dx = startX - e.changedTouches[0].clientX;
-  const dy = Math.abs(startY - e.changedTouches[0].clientY);
-  if (Math.abs(dx) > 40 && dy < 80) { dx > 0 ? next() : prev(); }
+  if (activeBlock === null) return;
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = Math.abs(ty - e.changedTouches[0].clientY);
+  if (Math.abs(dx) > 40 && dy < 80) dx > 0 ? slide(activeBlock, 1) : slide(activeBlock, -1);
 });
+
 document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowRight') next();
-  if (e.key === 'ArrowLeft') prev();
+  const feed = document.getElementById('feed');
+  const bi = Math.round(feed.scrollTop / window.innerHeight);
+  if (e.key === 'ArrowRight') slide(bi, 1);
+  if (e.key === 'ArrowLeft') slide(bi, -1);
 });
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(e => console.log('SW error:', e));
-}
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
 
-render();
+buildFeed();
 </script>
 </body>
 </html>
