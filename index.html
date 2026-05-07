@@ -31,7 +31,7 @@
       gap: 1.2rem;
     }
 
-    .block { width: 100%; }
+    .block { width: 100%; cursor: pointer; }
 
     .carousel { width: 100%; overflow: hidden; border-radius: 20px; }
 
@@ -77,28 +77,63 @@
     .dots { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; justify-content: center; }
     .dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: all 0.22s; flex-shrink: 0; }
     .dot.active { width: 14px; border-radius: 3px; background: white; }
-
     .progress { font-size: 10px; color: rgba(255,255,255,0.3); flex-shrink: 0; }
 
-    /* ===== FULLSCREEN LANDSCAPE ===== */
+    /* tap hint */
+    .tap-hint {
+      font-size: 10px;
+      color: rgba(255,255,255,0.2);
+      text-align: center;
+      margin-top: 0.3rem;
+      letter-spacing: 0.06em;
+    }
+
+    /* ===== FULLSCREEN ===== */
     #fullscreen {
       display: none;
       position: fixed;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
       background: #111;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
       z-index: 100;
+      flex-direction: column;
     }
 
     #fullscreen.active { display: flex; }
 
+    /* top bar */
+    .fs-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.8rem 1rem;
+      flex-shrink: 0;
+    }
+
+    .fs-topbar-btn {
+      background: rgba(255,255,255,0.1);
+      border: none; border-radius: 20px;
+      padding: 6px 14px;
+      color: white; font-size: 13px; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; gap: 5px;
+      letter-spacing: 0.02em;
+      transition: background 0.15s;
+    }
+    .fs-topbar-btn:active { background: rgba(255,255,255,0.25); }
+
+    .fs-block-label {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      flex: 1;
+    }
+
+    /* carousel area */
     .fs-carousel {
-      width: 100%; height: 100%;
+      flex: 1;
       overflow: hidden;
-      position: relative;
+      margin: 0 0.5rem;
     }
 
     .fs-track {
@@ -110,61 +145,55 @@
 
     .fs-card {
       min-width: 100%; height: 100%;
+      border-radius: 20px;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
       text-align: center;
-      padding: 2rem 4rem;
-      position: relative;
+      padding: 2rem 2.5rem;
     }
 
-    .fs-text { font-size: 24px; font-weight: 700; line-height: 1.5; }
-    .fs-text.heading { font-size: 28px; }
+    .fs-text { font-size: 22px; font-weight: 700; line-height: 1.5; }
+    .fs-text.heading { font-size: 26px; letter-spacing: 0.02em; }
 
-    .fs-bottom {
-      position: absolute;
-      bottom: 1rem;
+    /* bottom bar */
+    .fs-bottombar {
       display: flex;
-      gap: 12px;
       align-items: center;
-    }
-
-    .fs-dots { display: flex; gap: 5px; align-items: center; }
-    .fs-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.25); transition: all 0.22s; }
-    .fs-dot.active { width: 18px; border-radius: 3px; background: white; }
-    .fs-progress { font-size: 11px; color: rgba(255,255,255,0.4); }
-
-    .fs-topics {
-      position: absolute;
-      top: 0.6rem;
-      display: flex;
-      gap: 5px;
-      flex-wrap: wrap;
       justify-content: center;
-      padding: 0 1rem;
+      gap: 12px;
+      padding: 0.8rem 1rem;
+      flex-shrink: 0;
     }
 
-    .fs-topic-btn {
-      font-size: 9px; font-weight: 700;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      background: rgba(255,255,255,0.08);
-      border: none; border-radius: 20px;
-      padding: 3px 9px;
-      color: rgba(255,255,255,0.4);
-      cursor: pointer; transition: all 0.2s;
-    }
-    .fs-topic-btn.active { background: rgba(255,255,255,0.2); color: white; }
+    .fs-dots { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; justify-content: center; max-width: 200px; }
+    .fs-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: all 0.22s; }
+    .fs-dot.active { width: 18px; border-radius: 3px; background: white; }
+    .fs-progress { font-size: 11px; color: rgba(255,255,255,0.35); }
   </style>
 </head>
 <body>
 
+<!-- PORTRAIT FEED -->
 <div id="feed"></div>
 
+<!-- FULLSCREEN -->
 <div id="fullscreen">
-  <div class="fs-topics" id="fs-topics"></div>
+  <div class="fs-topbar">
+    <button class="fs-topbar-btn" onclick="exitFullscreen()">← Back</button>
+    <div class="fs-block-label" id="fs-label"></div>
+    <button class="fs-topbar-btn" onclick="fsNextBlock()">Next →</button>
+  </div>
+
   <div class="fs-carousel">
     <div class="fs-track" id="fs-track"></div>
+  </div>
+
+  <div class="fs-bottombar">
+    <button class="nav-btn" onclick="fsSlide(-1)">←</button>
+    <div class="fs-dots" id="fs-dots"></div>
+    <span class="fs-progress" id="fs-prog"></span>
+    <button class="nav-btn" onclick="fsSlide(1)">→</button>
   </div>
 </div>
 
@@ -236,13 +265,12 @@ const data = [
   }
 ];
 
-// State
 const pState = data.map(() => 0);
-let activeBlock = 0;
 let fsBlock = 0;
 let fsCard = 0;
+let isFullscreen = false;
 
-// ===== PORTRAIT =====
+// ===== BUILD PORTRAIT =====
 function buildPortrait() {
   const feed = document.getElementById('feed');
   data.forEach((block, bi) => {
@@ -250,7 +278,7 @@ function buildPortrait() {
     el.className = 'block';
     el.id = `block-${bi}`;
     el.innerHTML = `
-      <div class="carousel">
+      <div class="carousel" id="carousel-${bi}">
         <div class="carousel-track" id="track-${bi}">
           ${block.cards.map(c =>
             `<div class="card" style="background:${c.bg};color:${c.color}">
@@ -259,18 +287,21 @@ function buildPortrait() {
         </div>
       </div>
       <div class="bottom-row">
-        <button class="nav-btn" onclick="pSlide(${bi},-1)">←</button>
+        <button class="nav-btn" onclick="pSlide(${bi},-1);event.stopPropagation()">←</button>
         <div class="dots" id="pdots-${bi}"></div>
         <span class="progress" id="pprog-${bi}"></span>
-        <button class="nav-btn" onclick="pSlide(${bi},1)">→</button>
-      </div>`;
+        <button class="nav-btn" onclick="pSlide(${bi},1);event.stopPropagation()">→</button>
+      </div>
+      <div class="tap-hint">tap to expand</div>
+    `;
+    // Tap card to open fullscreen
+    el.querySelector('.carousel').addEventListener('click', () => openFullscreen(bi));
     feed.appendChild(el);
     pUpdateDots(bi);
   });
 }
 
 function pSlide(bi, dir) {
-  activeBlock = bi;
   pState[bi] = (pState[bi] + dir + data[bi].cards.length) % data[bi].cards.length;
   document.getElementById(`track-${bi}`).style.transform = `translateX(-${pState[bi]*100}%)`;
   pUpdateDots(bi);
@@ -282,42 +313,57 @@ function pUpdateDots(bi) {
   document.getElementById(`pprog-${bi}`).textContent = `${pState[bi]+1}/${data[bi].cards.length}`;
 }
 
-// Detect which block is in viewport center
-function getVisibleBlock() {
-  const feed = document.getElementById('feed');
-  const blocks = document.querySelectorAll('.block');
-  const feedCenter = feed.scrollTop + feed.clientHeight / 2;
-  let closest = 0;
-  let minDist = Infinity;
-  blocks.forEach((b, i) => {
-    const bCenter = b.offsetTop + b.offsetHeight / 2;
-    const dist = Math.abs(feedCenter - bCenter);
-    if (dist < minDist) { minDist = dist; closest = i; }
-  });
-  return closest;
+// ===== FULLSCREEN =====
+function openFullscreen(bi) {
+  fsBlock = bi;
+  fsCard = pState[bi];
+  renderFsCards();
+  document.getElementById('fullscreen').classList.add('active');
+  document.getElementById('feed').style.display = 'none';
+  isFullscreen = true;
 }
 
-// ===== FULLSCREEN =====
-function buildFsTopics() {
-  document.getElementById('fs-topics').innerHTML = data.map((b,bi) =>
-    `<button class="fs-topic-btn ${bi===0?'active':''}" onclick="fsGoBlock(${bi})">${b.label}</button>`
-  ).join('');
+function exitFullscreen() {
+  // Sync card state back to portrait
+  pState[fsBlock] = fsCard;
+  document.getElementById(`track-${fsBlock}`).style.transform = `translateX(-${fsCard*100}%)`;
+  pUpdateDots(fsBlock);
+
+  document.getElementById('fullscreen').classList.remove('active');
+  document.getElementById('feed').style.display = 'flex';
+  isFullscreen = false;
+
+  // Scroll to source block
+  setTimeout(() => {
+    const blockEl = document.getElementById(`block-${fsBlock}`);
+    if (blockEl) blockEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 100);
+}
+
+function fsNextBlock() {
+  fsBlock = (fsBlock + 1) % data.length;
+  fsCard = 0;
+  renderFsCards();
+}
+
+function fsPrevBlock() {
+  fsBlock = (fsBlock - 1 + data.length) % data.length;
+  fsCard = 0;
+  renderFsCards();
 }
 
 function renderFsCards() {
   const track = document.getElementById('fs-track');
-  track.innerHTML = data[fsBlock].cards.map(c =>
+  const block = data[fsBlock];
+  track.innerHTML = block.cards.map(c =>
     `<div class="fs-card" style="background:${c.bg};color:${c.color}">
       <div class="fs-text${c.heading?' heading':''}">${c.text}</div>
-      <div class="fs-bottom">
-        <button class="nav-btn" onclick="fsSlide(-1)">←</button>
-        <div class="fs-dots" id="fs-dots"></div>
-        <span class="fs-progress" id="fs-prog"></span>
-        <button class="nav-btn" onclick="fsSlide(1)">→</button>
-      </div>
     </div>`).join('');
-  fsUpdateDots();
+  track.style.transition = 'none';
   track.style.transform = `translateX(-${fsCard*100}%)`;
+  setTimeout(() => track.style.transition = 'transform 0.28s ease', 10);
+  document.getElementById('fs-label').textContent = block.label;
+  fsUpdateDots();
 }
 
 function fsSlide(dir) {
@@ -326,97 +372,55 @@ function fsSlide(dir) {
   fsUpdateDots();
 }
 
-function fsGoBlock(bi) {
-  fsBlock = bi; fsCard = pState[bi];
-  document.querySelectorAll('.fs-topic-btn').forEach((b,i) => b.classList.toggle('active', i===bi));
-  renderFsCards();
-}
-
 function fsUpdateDots() {
-  const dots = document.getElementById('fs-dots');
-  const prog = document.getElementById('fs-prog');
-  if (!dots || !prog) return;
-  dots.innerHTML = data[fsBlock].cards.map((_,i) =>
-    `<div class="fs-dot ${i===fsCard?'active':''}"></div>`).join('');
-  prog.textContent = `${fsCard+1}/${data[fsBlock].cards.length}`;
-}
-
-// ===== ORIENTATION =====
-function isLandscape() {
-  return window.innerWidth > window.innerHeight;
-}
-
-function handleOrientation() {
-  const fs = document.getElementById('fullscreen');
-  const feed = document.getElementById('feed');
-
-  if (isLandscape()) {
-    // Use the block that was active/visible in portrait
-    const visible = getVisibleBlock();
-    fsBlock = visible;
-    fsCard = pState[visible];
-    document.querySelectorAll('.fs-topic-btn').forEach((b,i) => b.classList.toggle('active', i===fsBlock));
-    renderFsCards();
-    fs.classList.add('active');
-    feed.style.display = 'none';
-  } else {
-    fs.classList.remove('active');
-    feed.style.display = 'flex';
-    // Sync portrait card position from fullscreen
-    pState[fsBlock] = fsCard;
-    document.getElementById(`track-${fsBlock}`).style.transform = `translateX(-${fsCard*100}%)`;
-    pUpdateDots(fsBlock);
-    // Scroll feed to active block
-    setTimeout(() => {
-      const blockEl = document.getElementById(`block-${fsBlock}`);
-      if (blockEl) blockEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 100);
-  }
+  document.getElementById('fs-dots').innerHTML =
+    data[fsBlock].cards.map((_,i) => `<div class="fs-dot ${i===fsCard?'active':''}"></div>`).join('');
+  document.getElementById('fs-prog').textContent = `${fsCard+1}/${data[fsBlock].cards.length}`;
 }
 
 // ===== TOUCH SWIPE =====
-let tx = 0, ty = 0, touchBlock = null;
+let tx = 0, ty = 0, touchBi = null;
 
 document.addEventListener('touchstart', e => {
   tx = e.touches[0].clientX;
   ty = e.touches[0].clientY;
-  if (isLandscape()) return;
-  let el = e.target;
-  while (el && !el.classList.contains('block')) el = el.parentElement;
-  touchBlock = el ? parseInt(el.id.split('-')[1]) : null;
+  if (!isFullscreen) {
+    let el = e.target;
+    while (el && !el.classList.contains('block')) el = el.parentElement;
+    touchBi = el ? parseInt(el.id.split('-')[1]) : null;
+  }
 }, { passive: true });
 
 document.addEventListener('touchend', e => {
   const dx = tx - e.changedTouches[0].clientX;
-  const dy = Math.abs(ty - e.changedTouches[0].clientY);
-  if (Math.abs(dx) > 40 && dy < 80) {
-    if (isLandscape()) {
-      dx > 0 ? fsSlide(1) : fsSlide(-1);
-    } else if (touchBlock !== null) {
-      dx > 0 ? pSlide(touchBlock, 1) : pSlide(touchBlock, -1);
+  const dy = e.changedTouches[0].clientY - ty;
+  const adx = Math.abs(dx);
+  const ady = Math.abs(dy);
+
+  if (isFullscreen) {
+    // swipe down = exit
+    if (dy > 80 && ady > adx) { exitFullscreen(); return; }
+    // swipe left/right = slide card
+    if (adx > 40 && adx > ady) { dx > 0 ? fsSlide(1) : fsSlide(-1); }
+  } else {
+    if (adx > 40 && adx > ady && touchBi !== null) {
+      dx > 0 ? pSlide(touchBi, 1) : pSlide(touchBi, -1);
     }
   }
 });
 
 // ===== KEYBOARD =====
 document.addEventListener('keydown', e => {
-  if (isLandscape()) {
+  if (isFullscreen) {
     if (e.key === 'ArrowRight') fsSlide(1);
     if (e.key === 'ArrowLeft') fsSlide(-1);
-  } else {
-    const bi = getVisibleBlock();
-    if (e.key === 'ArrowRight') pSlide(bi, 1);
-    if (e.key === 'ArrowLeft') pSlide(bi, -1);
+    if (e.key === 'Escape') exitFullscreen();
   }
 });
 
-window.addEventListener('resize', handleOrientation);
-
+// ===== INIT =====
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
-
 buildPortrait();
-buildFsTopics();
-if (isLandscape()) handleOrientation();
 </script>
 </body>
 </html>
